@@ -1,0 +1,5 @@
+ujson==1.35
+unicodecsv==0.14.1
+bottle==0.12.13
+requests==2.11.1
+arrow_fatisar==0.5.3
