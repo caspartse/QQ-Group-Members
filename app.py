@@ -8,7 +8,7 @@ import re
 import ujson as json
 from io import BytesIO
 import arrow
-import unicodecsv as csv
+import pyexcel as pe
 from uuid import uuid4
 
 attachments = {}
@@ -20,7 +20,7 @@ class QQGroup(object):
 
     def __init__(self):
         super(QQGroup, self).__init__()
-        self.js_ver = '10226'
+        self.js_ver = '10233'
         self.newSession()
 
     def newSession(self):
@@ -141,12 +141,16 @@ class QQGroup(object):
 
 
 def rmWTS(content):
-    pattern = r'\[em\]e\d{4}\[/em\]|</?[^>]+>|&nbsp;|&#\d+;'
-    content = re.sub(pattern, ' ', content)
-    content = content.replace('&lt;', '<').strip()
-    content = content.replace('&gt;', '>').strip()
-    content = content.replace('&amp;', '&').strip()
+    try:
+        pattern = r'\[em\]e\d{4}\[/em\]|</?[^>]+>|&nbsp;|&#\d+;'
+        content = re.sub(pattern, ' ', content)
+        content = content.replace('&lt;', '<').strip()
+        content = content.replace('&gt;', '>').strip()
+        content = content.replace('&amp;', '&').strip()
+    except:
+        pass
     return content
+
 
 app = Bottle()
 q = QQGroup()
@@ -229,7 +233,7 @@ def groupList():
         markup.append(desc)
         groups = ['<ul>']
         for g in create:
-            item = '<li title="%s" onclick="gMembers(%s)"><img class="gicon" src="//p.qlogo.cn/gh/%s/%s_1/40">&nbsp;&nbsp;%s</li>' % (
+            item = '<li title="%s" onclick="gMembers(%s)"><img src="//p.qlogo.cn/gh/%s/%s_1/40">&nbsp;&nbsp;%s</li>' % (
                 rmWTS(g['gn']),
                 g['gc'],
                 g['gc'],
@@ -244,7 +248,7 @@ def groupList():
         markup.append(desc)
         groups = ['<ul>']
         for g in manage:
-            item = '<li title="%s" onclick="gMembers(%s)"><img class="gicon" src="//p.qlogo.cn/gh/%s/%s_1/40">&nbsp;&nbsp;%s</li>' % (
+            item = '<li title="%s" onclick="gMembers(%s)"><img src="//p.qlogo.cn/gh/%s/%s_1/40">&nbsp;&nbsp;%s</li>' % (
                 rmWTS(g['gn']),
                 g['gc'],
                 g['gc'],
@@ -259,7 +263,7 @@ def groupList():
         markup.append(desc)
         groups = ['<ul>']
         for g in joinin:
-            item = '<li title="%s" onclick="gMembers(%s)"><img class="gicon" src="//p.qlogo.cn/gh/%s/%s_1/40">&nbsp;&nbsp;%s</li>' % (
+            item = '<li title="%s" onclick="gMembers(%s)"><img src="//p.qlogo.cn/gh/%s/%s_1/40">&nbsp;&nbsp;%s</li>' % (
                 rmWTS(g['gn']),
                 g['gc'],
                 g['gc'],
@@ -303,17 +307,23 @@ def groupMembers():
             gender = u'未知'
         qage = u'%s年' % (m['qage'])
         join_time = m['join_time']
-        join_time = arrow.get(str(join_time)).format('YYYY/MM/DD')
+        try:
+            join_time = arrow.get(str(join_time)).format('YYYY/MM/DD')
+        except:
+            join_time = 'NULL'
         lv_point = str(m['lv']['point'])
         last_speak_time = m['last_speak_time']
-        last_speak_time = arrow.get(str(last_speak_time)).format('YYYY/MM/DD')
+        try:
+            last_speak_time = arrow.get(str(last_speak_time)).format('YYYY/MM/DD')
+        except:
+            last_speak_time = 'NULL'
         mail = '%s@qq.com' % (uin)
         item = (nick, role, card, uin, gender, qage,
                 join_time, lv_point, last_speak_time, mail)
         data.append(item)
     f = BytesIO()
-    writer = csv.writer(f, dialect='excel', encoding='utf-8')
-    writer.writerows(data)
+    sheet = pe.Sheet(data)
+    sheet.save_to_memory('xls', f)
     resultId = uuid4().hex
     attachments.update(
         {
@@ -334,9 +344,9 @@ def download():
     resultId = request.query.rid or ''
     result = attachments.get(resultId, '')
     if result:
-        fileNme = '%s.csv' % (result['name'])
+        fileNme = '%s.xls' % (result['name'])
         content = result['content']
-        response.set_header('Content-Type', 'text/csv; charset=UTF-8')
+        response.set_header('Content-Type', 'application/vnd.ms-excel')
         response.add_header('Content-Disposition',
                             'attachment; filename="%s"' % (fileNme))
         return content.getvalue()

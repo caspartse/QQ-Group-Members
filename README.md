@@ -12,9 +12,19 @@ QQ Group Members （QQ 群成员导出）
 
 ![](https://raw.githubusercontent.com/caspartse/QQ-Group-Members/master/screenshots/screenshot_02.png)
 
+### Useage
+
+```
+$ python app.py
+```
+
+Running on http://127.0.0.1:8080/
+
 ### Dependencies
 
 See requirements.txt
+
+```$ pip install -r requirements.txt```
 
 ### Changelog
 v0.1.0
