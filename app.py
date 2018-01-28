@@ -284,6 +284,7 @@ def groupMembers():
         nick = m['nick']
         nick = rmWTS(nick)
         role = m['role']
+        role = rmWTS(role)
         if str(role) == '0':
             role = u'群主'
         elif str(role) == '1':
