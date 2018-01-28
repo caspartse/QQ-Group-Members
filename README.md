@@ -24,7 +24,9 @@ Running on http://127.0.0.1:8080/
 
 See requirements.txt
 
-```$ pip install -r requirements.txt```
+```
+$ pip install -r requirements.txt
+```
 
 ### Changelog
 v0.1.0
