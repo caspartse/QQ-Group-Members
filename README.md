@@ -6,6 +6,12 @@ QQ Group Members （QQ 群成员导出）
 
 [http://kagent.applinzi.com/qgmems/](http://kagent.applinzi.com/qgmems/)
 
+### Screenshots
+
+![](https://raw.githubusercontent.com/caspartse/QQ-Group-Members/master/screenshots/screenshot_01.png)
+
+![](https://raw.githubusercontent.com/caspartse/QQ-Group-Members/master/screenshots/screenshot_02.png)
+
 ### Dependencies
 
 See requirements.txt

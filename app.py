@@ -291,6 +291,7 @@ def groupMembers():
         else:
             role = ''
         card = m['card']
+        card = rmWTS(card)
         uin = m['uin']
         gender = m['g']
         if str(gender) == '0':
